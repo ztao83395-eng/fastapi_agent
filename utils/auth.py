@@ -1,0 +1,19 @@
+from fastapi import Depends, Header, HTTPException, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
+
+from crud import users
+from config.db_conf import get_database
+
+security = HTTPBearer()
+
+async def get_current_user(
+        credentials: HTTPAuthorizationCredentials = Security(security),  # 使用Security
+        db: AsyncSession = Depends(get_database),
+):
+    token = credentials.credentials
+    user = await users.get_user_by_token(db, token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="无效令牌或已过期令牌")
+    return user

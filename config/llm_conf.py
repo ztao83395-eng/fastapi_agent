@@ -10,7 +10,7 @@ for _env_name in ("env", ".env"):
         break
 
 # ========== 阿里云百炼配置 ==========
-BAILIAN_API_KEY = os.getenv("BAILIAN_API_KEY", "sk-585fdc53eb1344c79a3b567aa35b1da4")
+BAILIAN_API_KEY = os.getenv("BAILIAN_API_KEY", "")
 BAILIAN_BASE_URL = os.getenv("BAILIAN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
 
 # ========== 模型选择 ==========

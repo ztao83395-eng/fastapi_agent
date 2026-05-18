@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.Python
+*.manifest
+*.spec
+
+# 虚拟环境
+.venv/
+venv/
+env/
+env.bak/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 密钥文件
+env
+.env
+*.env
+.env.*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# 测试与覆盖率
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker 自身
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# 日志
+*.log
+logs/
+
+# ChromaDB 向量存储（运行时 volume 挂载）
+vector_store/
+
+# 文档
+*.md
+docs/

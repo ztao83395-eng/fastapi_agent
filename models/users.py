@@ -2,10 +2,10 @@
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import Index, Integer, String, Enum, DateTime
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Base(DeclarativeBase):
-    pass
+from models import Base
+
 
 class User(Base):
     __tablename__ = 'user'

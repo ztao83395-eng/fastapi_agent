@@ -1,11 +1,11 @@
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, DateTime, ForeignKey, Index
 from datetime import datetime
+
+from models import Base
 from .users import User
 from .news import News
 
-class Base(DeclarativeBase):
-    pass
 
 class History(Base):
     __tablename__ = 'history'

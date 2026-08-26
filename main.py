@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from routers import news, users, favorite, history, agent
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -6,6 +7,9 @@ from utils.exception_handlers import register_exception_handlers
 from config.db_conf import init_db
 
 app = FastAPI()
+
+# 本地新闻图片（static/images/），避免外链图源（picsum.photos）国内访问超时
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 register_exception_handlers(app)
 

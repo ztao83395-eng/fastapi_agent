@@ -9,3 +9,4 @@ from .news import News, Category
 from .users import User, UserToken
 from .favorite import Favorite
 from .history import History
+from .usage import AiUsage

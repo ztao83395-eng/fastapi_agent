@@ -8,7 +8,7 @@ from langchain_openai import ChatOpenAI
 from sqlalchemy import select, delete
 
 from config.db_conf import get_database
-from config.llm_conf import BAILIAN_API_KEY, BAILIAN_BASE_URL, LLM_MODEL, TEMPERATURE
+from config.llm_conf import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, TEMPERATURE
 from crud import favorite
 from models.favorite import Favorite
 from models.news import News
@@ -162,8 +162,8 @@ tools = [search_news_by_keyword, add_favorite, remove_favorite,get_my_favorites,
 
 def create_agent_executor():
     llm = ChatOpenAI(
-        openai_api_key=BAILIAN_API_KEY,
-        base_url=BAILIAN_BASE_URL,
+        openai_api_key=LLM_API_KEY,
+        base_url=LLM_BASE_URL,
         model_name=LLM_MODEL,
         temperature=TEMPERATURE
     )

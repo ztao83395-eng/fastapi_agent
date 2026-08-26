@@ -2,9 +2,9 @@ import asyncio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.db_conf import async_engine
-from config.llm_conf import BAILIAN_API_KEY, EMBEDDING_MODEL, VECTOR_STORE_DIR
+from config.llm_conf import EMBEDDING_API_KEY, EMBEDDING_MODEL, VECTOR_STORE_DIR
 from models.news import News
-from langchain_community import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import DashScopeEmbeddings
 import aiohttp
 import asyncio
@@ -42,14 +42,14 @@ async def build_news_vectors_optimized():
 
         # 使用原生 dashscope 配置超时
         import dashscope
-        dashscope.api_key = BAILIAN_API_KEY
+        dashscope.api_key = EMBEDDING_API_KEY
 
         # 配置超时
         from dashscope import TextEmbedding
 
         embeddings = DashScopeEmbeddings(
             model=EMBEDDING_MODEL,
-            dashscope_api_key=BAILIAN_API_KEY,
+            dashscope_api_key=EMBEDDING_API_KEY,
         )
 
         # 测试
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     #查看数据库信息
     embeddings = DashScopeEmbeddings(
         model=EMBEDDING_MODEL,
-        dashscope_api_key=BAILIAN_API_KEY,
+        dashscope_api_key=EMBEDDING_API_KEY,
     )
 
     vectorstore = Chroma(

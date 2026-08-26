@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #e9eaec;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #323233;
+}
+
+/* 移动端 App 容器：桌面浏览器居中呈手机效果 */
+#app {
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: #f7f8fa;
+  position: relative;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 通用页面布局：顶部导航 + 内容 + 底部安全区 */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f8fa;
+}
+
+.page-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 底部安全区（刘海屏） */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* AI 回答的 markdown 样式 */
+.markdown-body {
+  line-height: 1.7;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.markdown-body p {
+  margin: 4px 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  margin: 10px 0 6px;
+  font-size: 16px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 18px;
+  margin: 4px 0;
+}
+
+.markdown-body code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+}
+
+.markdown-body pre {
+  background: #2b2b2b;
+  color: #f8f8f2;
+  padding: 10px 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 6px 0;
+}
+
+.markdown-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid #ddd;
+  padding-left: 10px;
+  color: #666;
+  margin: 6px 0;
+}
+
+.markdown-body a {
+  color: #1989fa;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  margin: 6px 0;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+}

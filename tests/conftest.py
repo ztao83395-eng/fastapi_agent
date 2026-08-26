@@ -48,17 +48,17 @@ async def auth_headers(client):
 @pytest_asyncio.fixture(scope="module")
 async def seed_news(client):
     """在数据库中插入测试分类和新闻，返回 news_id"""
-    from models.news import News, NewsCategory
+    from models.news import News, Category
     from sqlalchemy import select
 
     async with AsyncSessionLocal() as db:
         # 检查是否已有测试分类
         result = await db.execute(
-            select(NewsCategory).where(NewsCategory.name == "测试分类")
+            select(Category).where(Category.name == "测试分类")
         )
         cat = result.scalar_one_or_none()
         if cat is None:
-            cat = NewsCategory(name="测试分类", sort_order=1)
+            cat = Category(name="测试分类", sort_order=1)
             db.add(cat)
             await db.flush()
 

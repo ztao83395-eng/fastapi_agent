@@ -70,9 +70,13 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       RAG_REDIS_DB: 15
+      # 对话/Agent 走 DeepSeek（注意：deepseek-reasoner 不支持 function calling）
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+      # Embedding 保留百炼
       BAILIAN_API_KEY: ${BAILIAN_API_KEY}
       BAILIAN_BASE_URL: ${BAILIAN_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
-      LLM_MODEL: ${LLM_MODEL:-qwen-plus}
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-v4}
       TEMPERATURE: ${TEMPERATURE:-0.1}
       VECTOR_STORE_DIR: /app/vector_store

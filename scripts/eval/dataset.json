@@ -1,0 +1,44 @@
+{
+  "rag_questions": [
+    {
+      "question": "最近有什么关于人工智能的新闻？",
+      "expected_points": ["提到了与人工智能相关的新闻内容"]
+    },
+    {
+      "question": "介绍一下科技领域的最新动态",
+      "expected_points": ["基于检索到的新闻给出具体内容"]
+    },
+    {
+      "question": "今天有什么财经新闻值得关注？",
+      "expected_points": ["基于检索到的财经类新闻回答"]
+    },
+    {
+      "question": "帮我总结一下昨天的主要新闻事件",
+      "expected_points": ["总结检索到的新闻，不编造事实"]
+    }
+  ],
+  "agent_tasks": [
+    {
+      "question": "搜索一下关于\"人工智能\"的新闻",
+      "expected_tool": "search_news_by_keyword",
+      "expected_args": {"keyword": "人工智能"},
+      "user_id": 1
+    },
+    {
+      "question": "我收藏了哪些新闻？",
+      "expected_tool": "get_my_favorites",
+      "user_id": 1
+    },
+    {
+      "question": "帮我看看我的收藏夹里有什么",
+      "expected_tool": "get_my_favorites",
+      "user_id": 1
+    },
+    {
+      "question": "清空我的收藏夹",
+      "expected_tool": "clear_favorites",
+      "user_id": 1,
+      "mutation": true
+    }
+  ]
+}

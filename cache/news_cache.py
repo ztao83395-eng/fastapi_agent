@@ -2,7 +2,7 @@
 #key-value
 from typing import Any, Dict, List, Optional
 
-from config.cache_conf import get_json_cache, set_cache, delete_cache
+from cache.redis_cache import get_json_cache, set_cache, delete_cache
 
 CATEGORIES_KEY="news:categories"
 NEWS_LIST_PREFIX="news_list:"

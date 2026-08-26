@@ -1,7 +1,7 @@
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from config.llm_conf import BAILIAN_API_KEY, BAILIAN_BASE_URL, EMBEDDING_MODEL, VECTOR_STORE_DIR
+from config.llm_conf import EMBEDDING_API_KEY, EMBEDDING_MODEL, VECTOR_STORE_DIR
 
 class VectorStoreManager:
     _instance = None
@@ -16,7 +16,7 @@ class VectorStoreManager:
     def _init_store(self):
         self.embeddings = DashScopeEmbeddings(
             model=EMBEDDING_MODEL,
-            dashscope_api_key=BAILIAN_API_KEY,
+            dashscope_api_key=EMBEDDING_API_KEY,
         )
         self.store = Chroma(
             persist_directory=VECTOR_STORE_DIR,

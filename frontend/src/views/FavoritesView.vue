@@ -9,7 +9,7 @@
     <NewsList ref="listRef" :fetch-page="fetchPage" @item-click="goDetail">
       <template #item="{ item, click }">
         <van-swipe-cell>
-          <NewsCard :item="item" :time-field="'favoriteTime'" @click="click" />
+          <NewsCard :item="item" :time-field="'favoriteTime'" :show-fav="false" @click="click" />
           <template #right>
             <van-button square type="danger" text="删除" class="swipe-del" @click="onDelete(item)" />
           </template>

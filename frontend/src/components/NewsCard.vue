@@ -24,20 +24,60 @@
         <span>{{ formatViews(item.views) }} 阅读</span>
         <span class="dot">·</span>
         <span>{{ formatRelativeTime(timeField ? item[timeField] : item.publishTime || item.publishedTime) }}</span>
+        <span
+          v-if="showFav"
+          class="fav-star"
+          :class="{ active: faved }"
+          @click.stop="toggleFav"
+        >{{ faved ? '⭐' : '☆' }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
+import { showToast } from 'vant'
 import { formatRelativeTime, formatViews } from '@/utils/format'
+import { addFavorite, removeFavorite } from '@/api/favorite'
+import { useUserStore } from '@/stores/user'
 
-defineProps({
+const props = defineProps({
   item: { type: Object, required: true },
   // 历史列表显示浏览时间 viewTime；默认显示发布时间
   timeField: { type: String, default: '' },
+  // 收藏/历史列表传 false（它们有自己的删除交互），其余列表默认显示
+  showFav: { type: Boolean, default: true },
+  // 收藏状态由父组件受控传入（列表页加载后批量查询后端填充），
+  // 卡片本身不再内部查询，点击后通过 fav-change 事件回传给父组件统一维护
+  faved: { type: Boolean, default: false },
 })
-defineEmits(['click'])
+const emit = defineEmits(['click', 'fav-change'])
+
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
+
+async function toggleFav() {
+  if (!userStore.isLoggedIn) {
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+  try {
+    if (props.faved) {
+      await removeFavorite(props.item.id)
+      emit('fav-change', false)
+      showToast('已取消收藏')
+    } else {
+      // add 接口幂等（重复收藏返回原记录），本地状态与真实状态偶有偏差也能自愈
+      await addFavorite(props.item.id)
+      emit('fav-change', true)
+      showToast('收藏成功')
+    }
+  } catch (e) {
+    // 拦截器已提示
+  }
+}
 </script>
 
 <style scoped>
@@ -104,5 +144,18 @@ defineEmits(['click'])
 
 .dot {
   margin: 0 4px;
+}
+
+.fav-star {
+  margin-left: auto;
+  padding: 0 2px;
+  font-size: 15px;
+  line-height: 1;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fav-star.active {
+  /* 保持视觉一致，颜色由 emoji 自带 */
 }
 </style>

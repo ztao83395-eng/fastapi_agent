@@ -57,7 +57,7 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     volumes:
-      - vector_store_data:/app/vector_store
+      - vector_store_data:/app/backend/vector_store
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
@@ -70,16 +70,20 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       RAG_REDIS_DB: 15
-      # 对话/Agent 走 DeepSeek（注意：deepseek-reasoner 不支持 function calling）
-      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
-      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com/v1}
-      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
-      # Embedding 保留百炼
-      BAILIAN_API_KEY: ${BAILIAN_API_KEY}
-      BAILIAN_BASE_URL: ${BAILIAN_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-v4}
-      TEMPERATURE: ${TEMPERATURE:-0.1}
-      VECTOR_STORE_DIR: /app/vector_store
+      # OpenAI chat and Agent tool calls
+      GPT_API_KEY: ${GPT_API_KEY-}
+      GPT_BASE_URL: ${GPT_BASE_URL-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.6-luna}
+      REASONING_EFFORT: ${REASONING_EFFORT-}
+      TEMPERATURE: ${TEMPERATURE-}
+      # OpenAI embedding
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY-}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gpt-5.6-luna}
+      VECTOR_COLLECTION_NAME: ${VECTOR_COLLECTION_NAME:-news_vectors_gpt}
+      VECTOR_STORE_DIR: /app/backend/vector_store
       DEBUG: ${DEBUG:-false}
     depends_on:
       mysql:

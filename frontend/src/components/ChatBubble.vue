@@ -1,12 +1,23 @@
 <template>
   <div class="chat-msg" :class="message.role">
     <div v-if="message.role === 'assistant'" class="msg-avatar assistant">🤖</div>
-    <div class="msg-main">
-      <div v-if="message.loading" class="msg-bubble loading-bubble">
-        <van-loading size="14" color="#1989fa" />
-        <span>思考中…</span>
+    <div class="msg-main" @click="onBubbleClick">
+      <div
+        v-if="message.loading"
+        class="msg-bubble loading-bubble"
+        :class="{ 'markdown-body': message.role === 'assistant' && message.content }"
+      >
+        <template v-if="message.content">
+          <!-- 流式进行中：显示已生成的内容 + 闪烁光标 -->
+          <div class="streaming" v-html="rendered"></div>
+          <span class="stream-cursor"></span>
+        </template>
+        <template v-else>
+          <van-loading size="14" color="#1989fa" />
+          <span>{{ message.toolMsg || '思考中…' }}</span>
+        </template>
       </div>
-      <div v-else-if="message.error" class="msg-bubble error-bubble" @click="emit('retry', message)">
+      <div v-else-if="message.error" class="msg-bubble error-bubble" @click.stop="emit('retry', message)">
         <div>{{ message.content }}</div>
         <div class="retry-tip">⚠ 点击此条重试</div>
       </div>
@@ -24,6 +35,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { renderMarkdown } from '@/utils/markdown'
 
 const props = defineProps({
@@ -31,7 +43,20 @@ const props = defineProps({
 })
 const emit = defineEmits(['retry'])
 
+const router = useRouter()
 const rendered = computed(() => renderMarkdown(props.message.content || ''))
+
+// 点击 AI 回答里的链接：站内新闻链接走 SPA 路由跳转（不整页刷新），
+// 其余 http 链接放行默认行为（新页面打开）
+function onBubbleClick(e) {
+  const a = e.target.closest('a')
+  if (!a) return
+  const href = a.getAttribute('href') || ''
+  if (href.startsWith('/news/')) {
+    e.preventDefault()
+    router.push(href)
+  }
+}
 </script>
 
 <style scoped>
@@ -100,6 +125,27 @@ const rendered = computed(() => renderMarkdown(props.message.content || ''))
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* 流式输出光标：闪烁的竖线 */
+.streaming {
+  display: inline;
+}
+
+.stream-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: #1989fa;
+  animation: cursor-blink 1s steps(1) infinite;
+}
+
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .error-bubble {

@@ -12,6 +12,14 @@ eggs/
 *.manifest
 *.spec
 
+# Frontend dependencies and local build output
+frontend/node_modules/
+frontend/dist/
+
+# Backend runtime data
+backend/vector_store/
+backend/static/avatars/
+
 # 虚拟环境
 .venv/
 venv/

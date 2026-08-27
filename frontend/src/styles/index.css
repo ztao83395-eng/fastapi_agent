@@ -45,6 +45,22 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Toast 提示：显式白底黑字。
+   Vant 默认黑底白字(rgba(0,0,0,0.7))在部分环境（如浏览器深色模式反转）
+   会变成白底白字看不清；显式指定颜色后浏览器不会反转，黑白分明 */
+.van-toast,
+.van-toast .van-toast__text {
+  background: #fff !important;
+  color: #000 !important;
+}
+.van-toast {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+/* 加载中 toast 的转圈图标同步改黑色（默认白色，白底上看不见） */
+.van-toast .van-loading__spinner {
+  color: #000 !important;
+}
+
 /* AI 回答的 markdown 样式 */
 .markdown-body {
   line-height: 1.7;
@@ -54,6 +70,13 @@ body {
 
 .markdown-body p {
   margin: 4px 0;
+}
+
+/* AI 回答中的新闻链接：蓝色可点击（点击由 ChatBubble 拦截走 SPA 跳转） */
+.markdown-body a {
+  color: #1989fa;
+  text-decoration: underline;
+  word-break: break-all;
 }
 
 .markdown-body h1,

@@ -1,5 +1,6 @@
 <template>
   <div class="page auth-page">
+    <van-nav-bar title="注册" left-arrow @click-left="goBack" />
     <div class="auth-head">
       <div class="auth-logo">📰</div>
       <div class="auth-title">创建账号</div>
@@ -12,10 +13,8 @@
           name="username"
           label="用户名"
           placeholder="请输入用户名"
-          :rules="[
-            { required: true, message: '请输入用户名' },
-            { pattern: /^[a-zA-Z0-9_]{3,20}$/, message: '3-20位字母、数字或下划线' },
-          ]"
+          maxlength="50"
+          :rules="[{ required: true, message: '请输入用户名' }]"
         />
         <van-field
           v-model="form.password"
@@ -76,6 +75,16 @@ async function onSubmit() {
     submitting.value = false
   }
 }
+
+// 左上角返回：用 vue-router 的 SPA 导航栈判断（不能看浏览器 history.length，
+// 它包含无关历史页面）；直接打开/刷新本页时 state.back 为 null → 回首页
+function goBack() {
+  if (router.options.history.state.back) {
+    router.back()
+  } else {
+    router.replace('/')
+  }
+}
 </script>
 
 <style scoped>
@@ -85,7 +94,7 @@ async function onSubmit() {
 }
 
 .auth-head {
-  padding: 48px 24px 32px;
+  padding: 24px 24px 32px;
   text-align: center;
 }
 

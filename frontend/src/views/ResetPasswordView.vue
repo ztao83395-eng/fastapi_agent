@@ -1,10 +1,10 @@
 <template>
   <div class="page auth-page">
-    <van-nav-bar title="登录" left-arrow @click-left="goBack" />
+    <van-nav-bar title="重置密码" left-arrow @click-left="goBack" />
     <div class="auth-head">
-      <div class="auth-logo">📰</div>
-      <div class="auth-title">欢迎回来</div>
-      <div class="auth-sub">登录小闻新闻，享受 AI 智能问答</div>
+      <div class="auth-logo">🔑</div>
+      <div class="auth-title">重置密码</div>
+      <div class="auth-sub">输入用户名与新密码即可重置，重置后请用新密码登录</div>
     </div>
     <van-form @submit="onSubmit" class="auth-form">
       <van-cell-group inset>
@@ -13,51 +13,60 @@
           name="username"
           label="用户名"
           placeholder="请输入用户名"
+          maxlength="50"
           :rules="[{ required: true, message: '请输入用户名' }]"
         />
         <van-field
-          v-model="form.password"
+          v-model="form.newPassword"
           type="password"
-          name="password"
-          label="密码"
-          placeholder="请输入密码"
-          :rules="[{ required: true, message: '请输入密码' }]"
+          name="newPassword"
+          label="新密码"
+          placeholder="请输入新密码（至少 6 位）"
+          :rules="[{ required: true, pattern: /^\S{6,}$/, message: '密码至少 6 位' }]"
+        />
+        <van-field
+          v-model="form.confirm"
+          type="password"
+          name="confirm"
+          label="确认密码"
+          placeholder="请再次输入新密码"
+          :rules="[{ validator: checkConfirm, message: '两次密码不一致' }]"
         />
       </van-cell-group>
       <div class="auth-btn">
         <van-button round block type="primary" native-type="submit" :loading="submitting">
-          登 录
+          重置密码
         </van-button>
       </div>
     </van-form>
     <div class="auth-footer">
-      还没有账号？
-      <span class="link" @click="router.push('/register')">立即注册</span>
-      <span class="divider">|</span>
-      <span class="link" @click="router.push('/forgot-password')">忘记密码？</span>
+      想起密码了？
+      <span class="link" @click="router.replace('/login')">去登录</span>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
-import { useUserStore } from '@/stores/user'
+import { resetPassword } from '@/api/user'
 
-const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
 
-const form = ref({ username: '', password: '' })
+const form = ref({ username: '', newPassword: '', confirm: '' })
 const submitting = ref(false)
+
+function checkConfirm(value) {
+  return value === form.value.newPassword
+}
 
 async function onSubmit() {
   submitting.value = true
   try {
-    await userStore.login(form.value)
-    showToast('登录成功')
-    router.replace(route.query.redirect || '/')
+    await resetPassword({ username: form.value.username, newPassword: form.value.newPassword })
+    showToast('重置成功，请登录')
+    router.replace('/login')
   } catch (e) {
     // 拦截器已提示
   } finally {
@@ -120,10 +129,5 @@ function goBack() {
 .link {
   color: #1989fa;
   cursor: pointer;
-}
-
-.divider {
-  margin: 0 8px;
-  color: #dcdee0;
 }
 </style>

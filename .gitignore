@@ -50,6 +50,7 @@ pnpm-debug.log*
 
 # Local vector stores and runtime data
 vector_store/
+backend/vector_store/
 chroma/
 *.sqlite3
 *.sqlite3-shm
@@ -58,6 +59,7 @@ chroma/
 *.db-shm
 *.db-wal
 static/avatars/
+backend/static/avatars/
 uploads/
 tmp/
 temp/

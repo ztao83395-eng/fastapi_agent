@@ -9,12 +9,17 @@
           placeholder="请输入昵称"
           maxlength="50"
         />
-        <van-field
-          v-model="form.avatar"
-          label="头像 URL"
-          placeholder="请输入头像图片地址"
-          maxlength="255"
-        />
+        <van-field name="avatar" label="头像">
+          <template #input>
+            <van-uploader
+              v-model="avatarFiles"
+              :max-count="1"
+              :after-read="onAvatarRead"
+              :max-size="2 * 1024 * 1024"
+              @oversize="showToast('图片不能超过 2MB')"
+            />
+          </template>
+        </van-field>
         <van-field
           is-link
           readonly
@@ -60,10 +65,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { useUserStore } from '@/stores/user'
+import { uploadAvatar } from '@/api/user'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -77,6 +83,8 @@ const genderColumns = [
 const form = ref({ nickname: '', avatar: '', gender: 'unknown', bio: '', phone: '' })
 const showGenderPicker = ref(false)
 const submitting = ref(false)
+// 头像上传组件数据：已保存的头像回显为 [{ url }]
+const avatarFiles = ref([])
 
 const genderText = computed(
   () => genderColumns.find((g) => g.value === form.value.gender)?.text || '保密'
@@ -92,10 +100,33 @@ onMounted(async () => {
       bio: info.bio || '',
       phone: info.phone || '',
     }
+    avatarFiles.value = form.value.avatar ? [{ url: form.value.avatar, isImage: true }] : []
   } catch (e) {
     // 拦截器已提示
   }
 })
+
+// 本地选择图片后上传：成功后把返回的 URL 写入 form.avatar（保存时随资料一起提交）
+async function onAvatarRead(file) {
+  try {
+    const data = await uploadAvatar(file.file)
+    form.value.avatar = data.url
+    // 用上传后的 URL 替换预览对象，避免再次触发 after-read
+    avatarFiles.value = [{ url: data.url, isImage: true }]
+    showToast('头像已上传')
+  } catch (e) {
+    file.status = 'failed'
+    file.message = '上传失败'
+  }
+}
+
+// 删除已选头像时同步清空 form.avatar
+watch(
+  () => avatarFiles.value.length,
+  (len) => {
+    if (len === 0) form.value.avatar = ''
+  }
+)
 
 function onGenderConfirm({ selectedOptions }) {
   form.value.gender = selectedOptions[0].value

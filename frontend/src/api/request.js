@@ -37,7 +37,9 @@ service.interceptors.response.use(
   },
   (error) => {
     const status = error.response?.status
-    if (status === 401) {
+    // 登录/注册接口自身的 401 = 账号密码错误，需要提示用户，不触发清 token 跳转
+    const isAuthRequest = /\/users\/(login|register)$/.test(error.config?.url || '')
+    if (status === 401 && !isAuthRequest) {
       // token 无效/过期：清除本地登录态并跳登录页
       localStorage.removeItem(TOKEN_KEY)
       localStorage.removeItem(USER_KEY)
@@ -46,7 +48,8 @@ service.interceptors.response.use(
         window.location.href = `/login?redirect=${encodeURIComponent(pathname + search)}`
       }
     } else {
-      showToast(error.response?.data?.detail || '网络异常，请稍后重试')
+      // 后端统一异常响应 {code,message,data} 或 FastAPI 默认 {detail}，兼容取 message
+      showToast(error.response?.data?.message || error.response?.data?.detail || '网络异常，请稍后重试')
     }
     const err = new Error(error.message || '请求失败')
     err.code = status

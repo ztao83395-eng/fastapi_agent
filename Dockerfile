@@ -14,7 +14,7 @@ RUN apt-get update && \
         libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 # pip使用清华源加速
 RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
@@ -46,10 +46,12 @@ WORKDIR /app
 
 COPY --chown=appuser:appuser . .
 
-RUN mkdir -p /app/vector_store && \
+RUN mkdir -p /app/backend/vector_store && \
     chown -R appuser:appuser /app
 
 USER appuser
+
+WORKDIR /app/backend
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
     CMD curl -sf http://localhost:8000/ || exit 1

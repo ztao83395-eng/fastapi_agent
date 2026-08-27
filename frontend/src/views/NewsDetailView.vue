@@ -8,12 +8,10 @@
       @click-left="router.back()"
     >
       <template #right>
-        <van-icon
-          :name="isFavorite ? 'star' : 'star-o'"
-          :color="isFavorite ? '#ffc300' : '#646566'"
-          size="20"
-          @click="toggleFavorite"
-        />
+        <span class="fav-btn" @click="toggleFavorite">
+          <span class="fav-star">{{ isFavorite ? '⭐' : '☆' }}</span>
+          <span class="fav-text" :class="{ active: isFavorite }">{{ isFavorite ? '已收藏' : '收藏' }}</span>
+        </span>
       </template>
     </van-nav-bar>
 
@@ -60,7 +58,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { getNewsDetail } from '@/api/news'
@@ -73,14 +71,18 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const newsId = Number(route.params.id)
+const newsId = computed(() => Number(route.params.id))
 const detail = ref(null)
 const loading = ref(true)
 const isFavorite = ref(false)
 
-onMounted(async () => {
+// 加载详情 + 登录后静默上报浏览历史 + 查询收藏状态
+async function loadDetail() {
+  loading.value = true
+  detail.value = null
+  isFavorite.value = false
   try {
-    detail.value = await getNewsDetail(newsId)
+    detail.value = await getNewsDetail(newsId.value)
   } catch (e) {
     if (e.code !== 404) showToast('新闻加载失败')
   } finally {
@@ -88,12 +90,18 @@ onMounted(async () => {
   }
   // 登录后：静默上报浏览历史 + 查询收藏状态
   if (userStore.isLoggedIn) {
-    addHistory(newsId).catch(() => {})
-    checkFavorite(newsId)
+    addHistory(newsId.value).catch(() => {})
+    checkFavorite(newsId.value)
       .then((data) => { isFavorite.value = data.isFavorite })
       .catch(() => {})
   }
-})
+}
+
+onMounted(loadDetail)
+
+// 相关推荐点击跳转 /news/:id 时组件实例复用，onMounted 不会重新执行，
+// 必须监听路由参数变化重新加载，否则点了"没反应"（页面停留旧新闻）
+watch(() => route.params.id, loadDetail)
 
 async function toggleFavorite() {
   if (!userStore.isLoggedIn) {
@@ -102,11 +110,11 @@ async function toggleFavorite() {
   }
   try {
     if (isFavorite.value) {
-      await removeFavorite(newsId)
+      await removeFavorite(newsId.value)
       isFavorite.value = false
       showToast('已取消收藏')
     } else {
-      await addFavorite(newsId)
+      await addFavorite(newsId.value)
       isFavorite.value = true
       showToast('收藏成功')
     }
@@ -119,6 +127,27 @@ async function toggleFavorite() {
 <style scoped>
 .detail-page {
   background: #fff;
+}
+
+.fav-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.fav-star {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.fav-text {
+  font-size: 12px;
+  color: #646566;
+}
+
+.fav-text.active {
+  color: #ff9500;
 }
 
 .detail-loading {
